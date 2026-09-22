@@ -1,0 +1,69 @@
+name: Site CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: site-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate static site
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check js/data.js
+          node --check js/app.js
+
+      - name: Validate asset references
+        run: python tools/validate-assets.py
+
+      - name: Smoke-test every page
+        shell: bash
+        run: |
+          python -m http.server 8080 >/tmp/club-jlm-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid"' EXIT
+          sleep 1
+          for page in \
+            index.html \
+            a-propos.html \
+            action.html \
+            actions.html \
+            bureau.html \
+            contact.html \
+            formations.html \
+            galerie.html \
+            projet.html \
+            projets.html \
+            qr.html \
+            trophees.html
+          do
+            curl --fail --silent --show-error "http://127.0.0.1:8080/$page" >/dev/null
+          done
