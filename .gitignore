@@ -1,0 +1,5 @@
+*.mp4
+!assets/video_header/
+!assets/video_header/*.mp4
+*.lnk
+tmp/

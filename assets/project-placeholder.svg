@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#081722"/><stop offset=".52" stop-color="#1d435a"/><stop offset="1" stop-color="#ffb000"/></linearGradient></defs>
+<rect width="1200" height="700" fill="url(#g)"/>
+<circle cx="970" cy="180" r="120" fill="#13a86b" opacity=".55"/>
+<circle cx="240" cy="520" r="170" fill="#ff1744" opacity=".45"/>
+<text x="600" y="355" text-anchor="middle" font-family="Arial" font-weight="900" font-size="82" fill="white">PROJET</text>
+<text x="600" y="415" text-anchor="middle" font-family="Arial" font-size="28" fill="#f1f6f8">Remplacez cette image par la photo officielle</text>
+</svg>
