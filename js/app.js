@@ -1,4 +1,5 @@
 const app=document.getElementById('app');
+const SITE_ORIGIN='https://ensakh.jlm.ma';
 const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const img=(src,alt='')=>`<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy">`;
 const icon=(name='')=>`<span class="icon" aria-hidden="true">${name}</span>`;
@@ -14,13 +15,45 @@ const HOME_GALLERY=[
   ['assets/marquee/jlm-08.webp','Vie du club']
 ];
 
+function setMeta(selector,attribute,value){
+  let element=document.head.querySelector(selector);
+  if(!element){
+    element=document.createElement(attribute==='href'?'link':'meta');
+    if(attribute==='href')element.rel='canonical';
+    else if(selector.includes('property='))element.setAttribute('property',selector.match(/property="([^"]+)"/)[1]);
+    else element.name=selector.match(/name="([^"]+)"/)[1];
+    document.head.appendChild(element);
+  }
+  element.setAttribute(attribute,value);
+}
+function setDetailMetadata(item,kind){
+  if(!item){
+    document.title=`${kind==='project'?'Projet':'Action'} introuvable | JLM ENSA Khouribga`;
+    setMeta('meta[name="robots"]','content','noindex,follow');
+    return;
+  }
+  const page=kind==='project'?'projet.html':'action.html';
+  const title=`${item.title} | JLM ENSA Khouribga`;
+  const description=item.short||item.description;
+  const url=`${SITE_ORIGIN}/${page}?id=${encodeURIComponent(item.id)}`;
+  const image=new URL(item.image,SITE_ORIGIN+'/').href;
+  document.title=title;
+  setMeta('meta[name="description"]','content',description);
+  setMeta('meta[name="robots"]','content','index,follow');
+  setMeta('link[rel="canonical"]','href',url);
+  setMeta('meta[property="og:title"]','content',title);
+  setMeta('meta[property="og:description"]','content',description);
+  setMeta('meta[property="og:url"]','content',url);
+  setMeta('meta[property="og:image"]','content',image);
+}
+
 function applyTheme(){if(localStorage.getItem('jlm-theme')==='dark')document.documentElement.classList.add('dark')}
 function toggleTheme(){document.documentElement.classList.toggle('dark');localStorage.setItem('jlm-theme',document.documentElement.classList.contains('dark')?'dark':'light');updateThemeButton()}
 function updateThemeButton(){document.querySelectorAll('.theme-toggle').forEach(b=>{const dark=document.documentElement.classList.contains('dark');b.innerHTML=dark?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.6 13.2A8.7 8.7 0 0 1 10.8 3.4 8.7 8.7 0 1 0 20.6 13.2Z"/><path d="M17.5 3v4M15.5 5h4"/></svg>';b.title=dark?'Passer en mode clair':'Passer en mode sombre';b.setAttribute('aria-label',b.title);b.setAttribute('aria-pressed',String(dark))})}
 function toggleMenu(){document.getElementById('mainNav')?.classList.toggle('open')}
 applyTheme();
 
-function header(){return `<header class="site-header"><div class="container header-inner"><a class="brand" href="index.html"><img src="assets/icon-pack-archive/ensa/jlm_logo.jpeg" alt="JLM ENSA Khouribga"><span><b>JLM ENSA Khouribga</b></span></a><nav id="mainNav" class="main-nav"><a href="index.html">Accueil</a><a href="a-propos.html">À propos</a><a href="projets.html">Projets</a><a href="actions.html">Actions</a><a href="formations.html">Formations</a><a href="bureau.html">Bureau</a><a href="galerie.html">Galerie</a><a href="trophees.html">Trophées</a><a href="contact.html">Contact</a></nav><div class="header-actions"><button class="icon-btn theme-toggle" onclick="toggleTheme()"></button><button class="icon-btn menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button></div></div></header>`}
+function header(){return `<header class="site-header"><div class="container header-inner"><a class="brand" href="/"><img src="assets/icon-pack-archive/ensa/jlm_logo.jpeg" alt="JLM ENSA Khouribga"><span><b>JLM ENSA Khouribga</b></span></a><nav id="mainNav" class="main-nav"><a href="/">Accueil</a><a href="a-propos.html">À propos</a><a href="projets.html">Projets</a><a href="actions.html">Actions</a><a href="formations.html">Formations</a><a href="bureau.html">Bureau</a><a href="galerie.html">Galerie</a><a href="trophees.html">Trophées</a><a href="contact.html">Contact</a></nav><div class="header-actions"><button class="icon-btn theme-toggle" onclick="toggleTheme()"></button><button class="icon-btn menu-toggle" onclick="toggleMenu()" aria-label="Menu">☰</button></div></div></header>`}
 function footer(){return `<footer class="site-footer reveal"><div class="footer-aurora" aria-hidden="true"></div><div class="container footer-content"><div class="footer-grid"><div class="footer-intro"><div class="footer-brand"><img src="assets/icon-pack-archive/ensa/jlm_logo.jpeg" alt="Logo JLM ENSA Khouribga"><div><b>${esc(CLUB.name)}</b><small>${esc(CLUB.slogan)}</small></div></div><p>Des étudiants qui transforment les idées en projets utiles, solidaires et durables.</p>${socialLinks()}</div><nav class="footer-links" aria-label="Découvrir"><h2>Découvrir</h2><a href="a-propos.html">À propos</a><a href="projets.html">Nos projets</a><a href="actions.html">Nos actions</a><a href="formations.html">Formations</a></nav><nav class="footer-links" aria-label="Communauté"><h2>Communauté</h2><a href="bureau.html">Le bureau</a><a href="galerie.html">Galerie</a><a href="trophees.html">Trophées</a><a href="qr.html">QR du club</a></nav><div class="footer-contact"><h2>Nous retrouver</h2><a href="mailto:${esc(CLUB.email)}">${esc(CLUB.email)}</a><p>École Nationale des Sciences Appliquées<br>Boulevard Béni Amir, BP 77<br>Khouribga 25000, Maroc</p><a class="footer-contact-link" href="contact.html">Nous contacter <span aria-hidden="true">→</span></a></div></div><div class="footer-wordmark" aria-hidden="true"><svg viewBox="0 0 900 220" role="presentation"><defs><radialGradient id="footerGlow" cx="50%" cy="50%" r="32%"><stop offset="0" stop-color="#ffc400"/><stop offset=".42" stop-color="#19bd70"/><stop offset=".76" stop-color="#ff1744"/><stop offset="1" stop-color="#ff1744" stop-opacity="0"/></radialGradient></defs><text class="footer-wordmark-base" x="450" y="172" text-anchor="middle">JLM</text><text class="footer-wordmark-trace" x="450" y="172" text-anchor="middle">JLM</text><text class="footer-wordmark-glow" x="450" y="172" text-anchor="middle">JLM</text></svg></div><div class="footer-bottom"><span>© ${new Date().getFullYear()} ${esc(CLUB.name)}</span><span>Étudiants · Innovation · Impact</span></div></div></footer>`}
 function contactIcon(file){return `assets/icon-pack-archive/page_contact/ChatGPT Image 18 sept. 2026, ${file}.png`}
 function socialLinks(){return `<div class="socials">${[['instagram','Instagram','03_20_40 (4)'],['github','GitHub','03_20_41 (6)'],['linkedin','LinkedIn','03_20_39 (2)']].map(([key,label,file])=>CLUB.social[key]?`<a href="${esc(CLUB.social[key])}" target="_blank" rel="noopener noreferrer" aria-label="${label}">${img(contactIcon(file),'')}</a>`:`<span class="social-pending" role="img" aria-label="${label} — lien à venir" title="${label} — lien à venir">${img(contactIcon(file),'')}</span>`).join('')}</div>`}
@@ -120,7 +153,7 @@ function team(){
   ${cta('Découvrir la vie du club','galerie.html')}`)
 }
 
-function detail(item,kind){if(kind==='action'&&item)return actionDetail(item);if(kind==='project'&&item)return projectDetail(item);const isP=kind==='project',back=isP?'projets.html':'actions.html';if(!item){layout(`<section class="container section empty"><h1>${isP?'Projet':'Action'} introuvable</h1><p>L’identifiant demandé ne correspond à aucun contenu.</p><a class="btn" href="${back}">Retour</a></section>`);return}layout(`<section class="container section"><a class="back" href="${back}">← Retour</a><div class="detail-head"><div>${img(item.image,item.title)}</div><article><span class="pill ${colorClass(item.color)}">${esc(item.category)}</span><small>${esc(item.year||'')}</small><h1>${esc(item.title)}</h1><p>${esc(item.short)}</p></article></div><div class="detail-body"><article>${heading('À','propos')}<p>${esc(item.description)}</p>${heading('Objectifs','')}<ul>${item.objectives.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${heading('Résultats','')}<div class="result-grid">${item.results.map((x,i)=>`<div><b>0${i+1}</b><span>${esc(x)}</span></div>`).join('')}</div>${heading('Équipe','')}<p>${esc(item.team||'Équipe du JLM ENSA Khouribga')}</p></article><aside><span>JLM ENSA KHOURIBGA</span><h3>${isP?'Projet':'Action'}</h3><p>${esc(item.status||'')}</p><a class="btn ghost darkbtn" href="${back}">Retour</a></aside></div></section>${cta('Découvrir la galerie','galerie.html')}`)}
+function detail(item,kind){setDetailMetadata(item,kind);if(kind==='action'&&item)return actionDetail(item);if(kind==='project'&&item)return projectDetail(item);const isP=kind==='project',back=isP?'projets.html':'actions.html';if(!item){layout(`<section class="container section empty"><h1>${isP?'Projet':'Action'} introuvable</h1><p>L’identifiant demandé ne correspond à aucun contenu.</p><a class="btn" href="${back}">Retour</a></section>`);return}layout(`<section class="container section"><a class="back" href="${back}">← Retour</a><div class="detail-head"><div>${img(item.image,item.title)}</div><article><span class="pill ${colorClass(item.color)}">${esc(item.category)}</span><small>${esc(item.year||'')}</small><h1>${esc(item.title)}</h1><p>${esc(item.short)}</p></article></div><div class="detail-body"><article>${heading('À','propos')}<p>${esc(item.description)}</p>${heading('Objectifs','')}<ul>${item.objectives.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>${heading('Résultats','')}<div class="result-grid">${item.results.map((x,i)=>`<div><b>0${i+1}</b><span>${esc(x)}</span></div>`).join('')}</div>${heading('Équipe','')}<p>${esc(item.team||'Équipe du JLM ENSA Khouribga')}</p></article><aside><span>JLM ENSA KHOURIBGA</span><h3>${isP?'Projet':'Action'}</h3><p>${esc(item.status||'')}</p><a class="btn ghost darkbtn" href="${back}">Retour</a></aside></div></section>${cta('Découvrir la galerie','galerie.html')}`)}
 function qr(){layout(`<section class="container section qr"><div>${heading('QR code','du club')}<h1>Scannez pour découvrir le JLM</h1><p>Le QR code pointe automatiquement vers la page d’accueil publiée.</p><code id="qrUrl"></code><button class="btn" onclick="window.print()">Imprimer</button></div><div id="qrcode" class="qrbox">Chargement…</div></section>`);const u=new URL('index.html',location.href);document.getElementById('qrUrl').textContent=u.href;const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';s.onload=()=>{const b=document.getElementById('qrcode');b.innerHTML='';new QRCode(b,{text:u.href,width:260,height:260,colorDark:'#081722',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.H})};document.body.appendChild(s)}
 
 const p=document.body.dataset.page;if(p==='home')home();if(p==='about')about();if(p==='projects')listing('project');if(p==='actions')listing('action');if(p==='team')team();if(p==='gallery')gallery();if(p==='project-detail')detail(getProject(new URLSearchParams(location.search).get('id')),'project');if(p==='action-detail')detail(getAction(new URLSearchParams(location.search).get('id')),'action');if(p==='qr')qr();

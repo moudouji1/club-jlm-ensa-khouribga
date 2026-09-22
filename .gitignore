@@ -3,3 +3,5 @@
 !assets/video_header/*.mp4
 *.lnk
 tmp/
+.vercel/
+.env*.local

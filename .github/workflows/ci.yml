@@ -44,6 +44,9 @@ jobs:
       - name: Validate asset references
         run: python tools/validate-assets.py
 
+      - name: Validate sitemap, robots and canonical metadata
+        run: python tools/validate-seo.py
+
       - name: Smoke-test every page
         shell: bash
         run: |
@@ -63,7 +66,9 @@ jobs:
             projet.html \
             projets.html \
             qr.html \
-            trophees.html
+            trophees.html \
+            sitemap.xml \
+            robots.txt
           do
             curl --fail --silent --show-error "http://127.0.0.1:8080/$page" >/dev/null
           done
