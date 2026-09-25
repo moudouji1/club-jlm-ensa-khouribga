@@ -52,11 +52,11 @@ body[data-page="team"] .hero p{max-width:510px}
 body[data-page="team"] .hero-shade{background:linear-gradient(90deg,rgba(3,13,21,.88),rgba(3,13,21,.5) 48%,rgba(3,13,21,.08))}
 .team-lead-section{position:relative;margin-top:-22px;padding-top:0;scroll-margin-top:110px}
 .team-leader{grid-template-columns:minmax(220px,320px) 1fr;padding:30px;gap:46px;background:linear-gradient(120deg,var(--surface),color-mix(in srgb,var(--red) 5%,var(--surface)))}
-.member-portrait{position:relative}
-.member-portrait>img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:16px;background:var(--surface2)}
+.member-portrait{position:relative;width:100%;aspect-ratio:2/3;border-radius:16px;background:var(--surface2)}
+.member-portrait>img{width:100%;height:100%;object-fit:contain;object-position:center;border-radius:inherit;background:var(--surface2)}
 .member-role-icon{position:absolute;bottom:-20px;left:10px;width:74px;height:74px;padding:8px;display:grid;place-items:center;border:3px solid var(--surface);border-radius:50%;background:var(--surface);box-shadow:0 4px 15px #08172220}
 .member-role-icon img{width:100%;height:100%;object-fit:contain}
-.team-leader>.member-portrait>img{aspect-ratio:1;object-fit:cover}
+.team-leader>.member-portrait>img{width:100%;height:100%;object-fit:contain;object-position:center}
 .team-leader .member-role-icon{top:-14px;left:-14px;bottom:auto;width:88px;height:88px}
 .team-leader .member-role-icon img{width:100%;height:100%;border-radius:0;object-fit:contain}
 .member-label{display:inline-block;padding:5px 12px;border-radius:7px;color:var(--red);background:color-mix(in srgb,var(--red) 10%,var(--surface));font-size:14px;font-weight:700}
@@ -529,8 +529,8 @@ body[data-page="home"] .alt .theme:hover,body[data-page="home"] .alt .theme:focu
   .reveal-ready{opacity:1;transform:none}.jlm-photo-marquee,.pillar-marquee{overflow-x:auto}.jlm-photo-group[aria-hidden="true"],.pillar-marquee-group[aria-hidden="true"]{display:none}
   .footer-wordmark-trace{stroke-dashoffset:0}
 }
-.team-leader>.member-portrait>img{aspect-ratio:3/4;object-fit:cover;object-position:center top}
-body[data-page="team"] .team-leader>.member-portrait>img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:center top}
+.team-leader>.member-portrait>img{width:100%;height:100%;object-fit:contain;object-position:center}
+body[data-page="team"] .team-leader>.member-portrait>img{width:100%;height:100%;object-fit:contain;object-position:center}
 
 /* Official project logos stay whole and readable in both themes. */
 .project-cover.illustrated:has(>img[src^="assets/logos_Projets/"]){background:#f1f5f2}
