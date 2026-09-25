@@ -29,6 +29,21 @@ foreach ($file in $files) {
 
     $source = [System.Drawing.Image]::FromFile($file.FullName)
     try {
+        if ($source.PropertyIdList -contains 274) {
+            $orientation = [BitConverter]::ToUInt16($source.GetPropertyItem(274).Value, 0)
+            $rotateFlip = switch ($orientation) {
+                2 { [System.Drawing.RotateFlipType]::RotateNoneFlipX }
+                3 { [System.Drawing.RotateFlipType]::Rotate180FlipNone }
+                4 { [System.Drawing.RotateFlipType]::Rotate180FlipX }
+                5 { [System.Drawing.RotateFlipType]::Rotate90FlipX }
+                6 { [System.Drawing.RotateFlipType]::Rotate90FlipNone }
+                7 { [System.Drawing.RotateFlipType]::Rotate270FlipX }
+                8 { [System.Drawing.RotateFlipType]::Rotate270FlipNone }
+                default { [System.Drawing.RotateFlipType]::RotateNoneFlipNone }
+            }
+            $source.RotateFlip($rotateFlip)
+        }
+
         $scale = [Math]::Min(1.0, $maxDimension / [double][Math]::Max($source.Width, $source.Height))
         $width = [Math]::Max(1, [int][Math]::Round($source.Width * $scale))
         $height = [Math]::Max(1, [int][Math]::Round($source.Height * $scale))
